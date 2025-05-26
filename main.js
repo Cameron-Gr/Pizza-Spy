@@ -3,6 +3,7 @@ let game;
 
 // ------------------------------------------------------------------------- //
 // Front End Menu
+
 class FrontEnd extends Phaser.Scene
 {
     constructor()
@@ -13,19 +14,19 @@ class FrontEnd extends Phaser.Scene
 
     preload()
     {
-
+        this.load.image("road", "Assets/Sprites/Gameplay/Road.png")
     }
 
 
     create()
     {
-
+        this.road = new Road(this, gameConfig.width / 2, 0, "road")
     }
 
     
     update()
     {
-
+        this.road.update()
     }
 }
 
@@ -124,7 +125,7 @@ window.onload = function ()
 {
     gameConfig =
     {
-        width: 640,
+        width: 480,
         height: 480,
         backgroundColor: 0x110248,
         physics:
