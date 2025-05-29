@@ -5,16 +5,25 @@ class Road extends Phaser.GameObjects.Image
         super(scene, x, y, texture)
 
         scene.add.existing(this)
+
+        this.speed = 1
     }
 
-    update()
+    update(isGameplay)
     {
-        this.y += 1
+        this.y += this.speed
 
         if (this.y >= gameConfig.height)
         {
             this.y = 0
         }
+
+        if (isGameplay && this.speed < 3)
+        {
+            this.speed *= 1.00001
+        }
+
+        // console.log(this.speed)
     }
 }
 

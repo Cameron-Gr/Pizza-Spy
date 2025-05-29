@@ -14,9 +14,9 @@ class Main extends Phaser.Scene
 
     preload()
     {
-        this.load.image("road", "Assets/Sprites/Gameplay/Road.png")
+        this.load.image("menuRoad", "Assets/Sprites/Menu/MenuRoad.png")
 
-        this.load.spritesheet("title", "Assets/Sprites/Menu/GameTitle.png", {frameWidth: 340, frameHeight: 130})
+        this.load.spritesheet("title", "Assets/Sprites/Menu/GameTitle.png", {frameWidth: 330, frameHeight: 130})
 
         this.load.spritesheet("play", "Assets/Sprites/Menu/PlayButton.png", {frameWidth: 160, frameHeight: 50})
         this.load.spritesheet("help", "Assets/Sprites/Menu/HelpButton.png", {frameWidth: 160, frameHeight: 50})
@@ -28,7 +28,7 @@ class Main extends Phaser.Scene
     {
         this.setUpAnimations()
 
-        this.road = new Road(this, gameConfig.width / 2, 0, "road")
+        this.road = new Road(this, gameConfig.width / 2, 0, "menuRoad")
 
 
         // Title
@@ -69,89 +69,71 @@ class Main extends Phaser.Scene
     
     update()
     {
-        this.road.update()
+        this.road.update(false)
     }
 
     setUpAnimations()
     {
-        //Lets set up our player idle
+        // Title text anim
         this.anims.create(
         {
-            //The name of the animation we want to play
             key: "titleAnim",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
             frames: this.anims.generateFrameNumbers("title", {start: 0, end: 3}),
             frameRate: 2,
-            //-1 = loop, 0 = no loop
             repeat: -1
         })
 
 
+        // Play button anim
         this.anims.create(
         {
-            //The name of the animation we want to play
             key: "playButtonOn",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
             frames: this.anims.generateFrameNumbers("play", {start: 1, end: 1}),
             frameRate: 8,
-            //-1 = loop, 0 = no loop
             repeat: 0
         })
 
         this.anims.create(
         {
-            //The name of the animation we want to play
             key: "playButtonOff",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
             frames: this.anims.generateFrameNumbers("play", {start: 0, end: 0}),
             frameRate: 8,
-            //-1 = loop, 0 = no loop
             repeat: 0
         })
 
 
+        // Help button anim
         this.anims.create(
         {
-            //The name of the animation we want to play
             key: "helpButtonOn",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
             frames: this.anims.generateFrameNumbers("help", {start: 1, end: 1}),
             frameRate: 8,
-            //-1 = loop, 0 = no loop
             repeat: 0
         })
 
         this.anims.create(
         {
-            //The name of the animation we want to play
             key: "helpButtonOff",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
             frames: this.anims.generateFrameNumbers("help", {start: 0, end: 0}),
             frameRate: 8,
-            //-1 = loop, 0 = no loop
             repeat: 0
         })
         
 
+        // Exit button anim
         this.anims.create(
         {
-            //The name of the animation we want to play
             key: "exitButtonOn",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
             frames: this.anims.generateFrameNumbers("exit", {start: 1, end: 1}),
             frameRate: 8,
-            //-1 = loop, 0 = no loop
             repeat: 0
         })
 
         this.anims.create(
         {
-            //The name of the animation we want to play
             key: "exitButtonOff",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
             frames: this.anims.generateFrameNumbers("exit", {start: 0, end: 0}),
             frameRate: 8,
-            //-1 = loop, 0 = no loop
             repeat: 0
         })
     }
@@ -170,11 +152,7 @@ class HowToPlay extends Phaser.Scene
 
     preload()
     {
-        this.load.image("road", "Assets/Sprites/Gameplay/Road.png")
-
-        this.load.spritesheet("title", "Assets/Sprites/Menu/GameTitle.png", {frameWidth: 340, frameHeight: 130})
-
-        this.load.spritesheet("exit", "Assets/Sprites/Menu/ExitButton.png", {frameWidth: 160, frameHeight: 50})
+        this.load.spritesheet("back", "Assets/Sprites/Menu/BackButton.png", {frameWidth: 160, frameHeight: 50})
     }
 
 
@@ -182,7 +160,7 @@ class HowToPlay extends Phaser.Scene
     {
         this.setUpAnimations()
 
-        this.road = new Road(this, gameConfig.width / 2, 0, "road")
+        this.road = new Road(this, gameConfig.width / 2, 0, "menuRoad")
 
 
         // Title
@@ -191,7 +169,7 @@ class HowToPlay extends Phaser.Scene
 
 
         // Back Button ----------------------------------------------------------
-        let backButton = this.add.sprite(240, 400, "exit")
+        let backButton = this.add.sprite(240, 400, "back")
 
         backButton.setInteractive()
 
@@ -202,43 +180,25 @@ class HowToPlay extends Phaser.Scene
 
     update()
     {
-        this.road.update()
+        this.road.update(false)
     }
 
     setUpAnimations()
     {
-        //Lets set up our player idle
+        // Back button anim
         this.anims.create(
         {
-            //The name of the animation we want to play
-            key: "titleAnim",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
-            frames: this.anims.generateFrameNumbers("title", {start: 0, end: 3}),
-            frameRate: 2,
-            //-1 = loop, 0 = no loop
-            repeat: -1
-        })
-
-
-        this.anims.create(
-        {
-            //The name of the animation we want to play
             key: "backButtonOn",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
-            frames: this.anims.generateFrameNumbers("exit", {start: 1, end: 1}),
+            frames: this.anims.generateFrameNumbers("back", {start: 1, end: 1}),
             frameRate: 8,
-            //-1 = loop, 0 = no loop
             repeat: 0
         })
 
         this.anims.create(
         {
-            //The name of the animation we want to play
             key: "backButtonOff",
-            //The frames that we want to loop through - check out the overall spritesheet called player!
-            frames: this.anims.generateFrameNumbers("exit", {start: 0, end: 0}),
+            frames: this.anims.generateFrameNumbers("back", {start: 0, end: 0}),
             frameRate: 8,
-            //-1 = loop, 0 = no loop
             repeat: 0
         })
     }
@@ -257,19 +217,81 @@ class Gameplay extends Phaser.Scene
 
     preload()
     {
+        this.load.image("road", "Assets/Sprites/Gameplay/Road.png")
 
+        this.load.spritesheet("playerVan", "Assets/Sprites/Gameplay/PlayerVan.png", {frameWidth: 60, frameHeight: 100})
+        this.load.image("projectile", "Assets/Sprites/Gameplay/PlayerProjectile.png")
     }
 
 
     create()
     {
+        this.setUpAnimations()
 
+        // Sets up keyboard
+        this.cursors = this.input.keyboard.createCursorKeys()
+
+        // Scrolling road
+        this.road = new Road(this, gameConfig.width / 2, 0, "road")
+        
+        // Group for player projectiles
+        this.projectiles = this.physics.add.group(
+            {
+                classType: Projectile,
+                runChildUpdate: true
+            }
+        )
+
+        // The player shoots a projectile when the space bar is pressed
+        this.input.keyboard.on('keydown-SPACE', () =>
+        {
+            this.fireProjectile()
+        })
+
+        this.player = new Player(this, gameConfig.width / 2, 380, "playerVan")
     }
 
     
     update()
     {
+        // Update road
+        this.road.update(true)
 
+        // Update player
+        this.player.update(this.cursors)
+
+        // Ends the game if the player leaves road boundaries
+        if (this.player.x < 80 || this.player.x > gameConfig.width - 80)
+        {
+            this.scene.start("main")
+        }
+    }
+
+
+    fireProjectile()
+    {
+        // Creates a new bullet object
+        let projectile = this.projectiles.get(this.player.x, this.player.y, "projectile")
+
+        // *Resetting physics body is good practice
+        projectile.body.reset(this.player.x, this.player.y)
+
+        // Unnaffected by gravity and travels upwards
+        projectile.body.allowGravity = false
+        projectile.setVelocityY(-300)
+    }
+
+
+    setUpAnimations()
+    {
+        // Title text anim
+        this.anims.create(
+        {
+            key: "playerVanAnim",
+            frames: this.anims.generateFrameNumbers("playerVan", {start: 0, end: 1}),
+            frameRate: 4,
+            repeat: -1
+        })
     }
 }
 
@@ -319,7 +341,7 @@ window.onload = function ()
             arcade:
             {
                 gravity: { y: 200 },
-                debug: false
+                debug: true
             }
         },
         scene: [Main, HowToPlay, Gameplay, GameOver]
