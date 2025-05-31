@@ -67,7 +67,19 @@ class Player extends Phaser.Physics.Arcade.Sprite
         this.play("playerVanAnim", true)
 
 
-        // console.log(this.velocity)
+
+        switch (this.lives)
+        {
+            case 2:
+                this.scene.life1.destroy()
+                break
+            case 1:
+                this.scene.life2.destroy()
+                break
+            case 0:
+                this.scene.life3.destroy()
+                break
+        }
     }
 }
 

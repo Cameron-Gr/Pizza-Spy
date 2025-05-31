@@ -1,6 +1,9 @@
 let gameConfig;
 let game;
 
+let score = 0;
+let highScore = 0;
+
 // ------------------------------------------------------------------------- //
 // Front End Menu
 
@@ -68,6 +71,20 @@ class Main extends Phaser.Scene
         exitButton.on("pointerdown", () => {window.close(), this.buttonSelect.play()})
         exitButton.on("pointerover", () => {exitButton.play("exitButtonOn")})
         exitButton.on("pointerout", () => {exitButton.play("exitButtonOff")})
+
+
+        // Text
+        if (highScore > 0)
+        {
+            this.highScoreText = this.add.text(240, 210, "High Score: " + highScore,
+                {
+                    fontFamily: "Tiny5-Regular",
+                    fontSize: "40px",
+                    color: "#FF2323"
+                }
+            )
+            this.highScoreText.setOrigin(0.5)
+        }
     }
 
     
@@ -175,14 +192,37 @@ class HowToPlay extends Phaser.Scene
         title.play("titleAnim")
 
 
-        // Menu Symbols
+        // Menu Symbols --------------------------------------------------
+        // Arrow keys symbol
         let arrowKeys = this.add.sprite(180, 240, "arrowKeys")
         arrowKeys.play("arrowKeysAnim")
 
+        // Arrow keys text
+        this.arrowKeyText = this.add.text(310, 240, ": Steer",
+            {
+                fontFamily: "Tiny5-Regular",
+                fontSize: "40px",
+                color: "#FF2323"
+            }
+        )
+        this.arrowKeyText.setOrigin(0.5)
+
+        // Space bar symbol
         let spaceBar = this.add.sprite(180, 320, "spaceBar")
         spaceBar.play("spaceBarAnim")
 
+        // Space bar text
+        this.spaceBarText = this.add.text(310, 320, ": Shoot",
+            {
+                fontFamily: "Tiny5-Regular",
+                fontSize: "40px",
+                color: "#FF2323"
+            }
+        )
+        this.spaceBarText.setOrigin(0.5)
 
+
+        // Sounds
         this.buttonSelect = this.sound.add("buttonSelect")
 
         // Back Button ----------------------------------------------------------
@@ -266,31 +306,34 @@ class Gameplay extends Phaser.Scene
 
         this.load.audio("pizzaFling", "Assets/Audio/pizzaFling.wav")
         this.load.audio("boneDrop", "Assets/Audio/boneDrop.wav")
+        this.load.audio("vehicleHit", "Assets/Audio/vehicleHit.wav")
+        this.load.audio("vehicleExplode", "Assets/Audio/vehicleExplode.wav")
     }
 
 
     create()
     {
+        // Resets score
+        score = 0
+
         this.setUpAnimations()
 
         // Sets up keyboard
         this.cursors = this.input.keyboard.createCursorKeys()
 
-        // Scrolling road
-        this.road = new Road(this, gameConfig.width / 2, 0, "road")
-        
-        // Life UI
-        this.lifeContainer = this.add.image(40, 90, "lifeContainer")
-        this.life1 = this.add.image(40, 45, "life")
-        this.life2 = this.add.image(40, 90, "life")
-        this.life3 = this.add.image(40, 135, "life")
-
+        // Sound effects
         this.pizzaFling = this.sound.add("pizzaFling")
         this.boneDrop = this.sound.add("boneDrop")
+        this.vehicleHit = this.sound.add("vehicleHit")
+        this.vehicleExplode = this.sound.add("vehicleExplode")
+
+
+        // Scrolling road background
+        this.road = new Road(this, gameConfig.width / 2, 0, "road")
 
 
         // Player ------------------------------------------------------------------------------
-        this.player = new Player(this, gameConfig.width / 2, 380, "playerVan")
+        this.player = new Player(this, gameConfig.width / 2, 370, "playerVan")
 
         // Group for player projectiles
         this.projectiles = this.physics.add.group(
@@ -328,15 +371,39 @@ class Gameplay extends Phaser.Scene
         // Colliders ------------------------------------------------------------------------------
         this.physics.add.collider(this.player, this.obstacles, (player, obstacles) =>
         {
+            this.vehicleHit.play()
             player.lives -= 1
             obstacles.destroy()
         })
 
         this.physics.add.collider(this.projectiles, this.enemies, (projectile, enemy) =>
         {
+            score += 100
+            this.scoreText.setText(score)
+
+            this.vehicleExplode.play()
             projectile.destroy()
             enemy.destroy()
         })
+
+
+        // UI ------------------------------------------------------------------------------
+        // Life container
+        this.lifeContainer = this.add.image(40, 390, "lifeContainer")
+
+        // Lives are destroyed one-by-one in the player class
+        this.life1 = this.add.image(40, 345, "life")
+        this.life2 = this.add.image(40, 390, "life")
+        this.life3 = this.add.image(40, 435, "life")
+
+        // Score text
+        this.scoreText = this.add.text(100, 420, score,
+            {
+                fontFamily: "Tiny5-Regular",
+                fontSize: "40px",
+                color: "#FF2323"
+            }
+        )
     }
 
     
@@ -474,6 +541,12 @@ class GameOver extends Phaser.Scene
 
     create()
     {
+        // Determines high score
+        if (highScore < score)
+        {
+            highScore = score
+        }
+
         this.setUpAnimations()
 
         this.road = new Road(this, gameConfig.width / 2, 0, "menuRoad")
@@ -481,19 +554,21 @@ class GameOver extends Phaser.Scene
         let gameOverSting = this.sound.add("gameOverSting")
         gameOverSting.play()
 
+
         // Game Over title
         this.gameOver = this.add.sprite(240, 110, "gameOver")
         this.gameOver.play("gameOverAnim")
 
-        // Fish mocking sound
+        // Sound effects
+        this.buttonSelect = this.sound.add("buttonSelect")
         this.fishMock = this.sound.add("fishMock")
         // Boolean to make mocking sound fire only once when condition is met
         this.fishSoundFire = true
 
 
-        this.buttonSelect = this.sound.add("buttonSelect")
         
-        // Play Button
+
+        // Play Button ----------------------------------------------------------
         let playButton = this.add.sprite(240, 340, "play")
 
         playButton.setInteractive()
@@ -501,6 +576,7 @@ class GameOver extends Phaser.Scene
         playButton.on("pointerdown", () => {this.scene.start("gameplay"), this.buttonSelect.play()})
         playButton.on("pointerover", () => {playButton.play("playButtonOn")})
         playButton.on("pointerout", () => {playButton.play("playButtonOff")})
+
 
         // Back Button ----------------------------------------------------------
         let backButton = this.add.sprite(240, 400, "back")
@@ -510,6 +586,28 @@ class GameOver extends Phaser.Scene
         backButton.on("pointerdown", () => {this.scene.start("main"), this.buttonSelect.play()})
         backButton.on("pointerover", () => {backButton.play("backButtonOn")})
         backButton.on("pointerout", () => {backButton.play("backButtonOff")})
+
+
+        // Text ----------------------------------------------------------
+        // Score text
+        this.scoreText = this.add.text(240, 220, "Your Score: " + score,
+            {
+                fontFamily: "Tiny5-Regular",
+                fontSize: "40px",
+                color: "#FF2323"
+            }
+        )
+        this.scoreText.setOrigin(0.5)
+
+        // High score text
+        this.highScoreText = this.add.text(240, 260, "High Score: " + highScore,
+            {
+                fontFamily: "Tiny5-Regular",
+                fontSize: "40px",
+                color: "#FF2323"
+            }
+        )
+        this.highScoreText.setOrigin(0.5)
     }
 
     update()
