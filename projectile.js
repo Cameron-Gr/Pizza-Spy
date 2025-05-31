@@ -16,7 +16,7 @@ class Projectile extends Phaser.Physics.Arcade.Image
 
     update()
     {
-        if(this.y < 10)
+        if(this.y < -40)
         {
             this.destroy()
         }

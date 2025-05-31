@@ -11,14 +11,16 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         this.setCollideWorldBounds(true)
 
-        this.body.setSize(45, 90)
-        this.setOffset(10, 10)
+        this.body.setSize(35, 90)
+        this.setOffset(15, 10)
 
         this.velocity = 0
         this.acceleration = 0
+
+        this.lives = 3
     }
 
-    update(kb)
+    update(cursorKeys)
     {
         // When there are no keyboard inputs
         this.rotation = 0
@@ -48,14 +50,14 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
 
         // Left movement (acceleration and deceleration)
-        if(kb.left.isDown || (kb.right.isUp && this.velocity > 0))
+        if(cursorKeys.left.isDown || (cursorKeys.right.isUp && this.velocity > 0))
         {
             this.acceleration = -1
 
             this.rotation = -0.1
         }
         // Right movement (acceleration and deceleration)
-        if(kb.right.isDown || (kb.left.isUp && this.velocity < 0))
+        if(cursorKeys.right.isDown || (cursorKeys.left.isUp && this.velocity < 0))
         {
             this.acceleration = 1
 
