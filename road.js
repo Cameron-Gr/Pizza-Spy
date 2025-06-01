@@ -20,10 +20,8 @@ class Road extends Phaser.GameObjects.Image
 
         if (isGameplay && this.speed < 3)
         {
-            this.speed *= 1.00001
+            this.speed *= 1.00005
         }
-
-        // console.log(this.speed)
     }
 }
 

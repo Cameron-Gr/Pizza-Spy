@@ -17,7 +17,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite
         this.velocity = 200
         this.deceleration = 1
 
-        this.dropTimer = Phaser.Math.Between(5, 10) / 10
+        this.dropTimer = Phaser.Math.Between(50, 100) / 100
     }
 
     update()
@@ -37,7 +37,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite
             if (this.dropTimer <= 0)
             {
                 this.scene.dropObstacle(this.x, this.y + 30)
-                this.dropTimer = Phaser.Math.Between(30, 50) / 10
+                this.dropTimer = Phaser.Math.Between(300, 500) / 100
             }
             else
             {

@@ -11,8 +11,10 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         this.setCollideWorldBounds(true)
 
-        this.body.setSize(35, 90)
-        this.setOffset(15, 10)
+        this.body.setSize(35, 80)
+        this.setOffset(15, 15)
+
+        this.visible = true
 
         this.velocity = 0
         this.acceleration = 0
@@ -42,7 +44,7 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
 
         // Makes sure velocity can reach and stay at 0 (prevents jittering)
-        if (this.velocity < 0.2 && this.velocity > -0.2)
+        if (this.velocity < 1 && this.velocity > -1)
         {
             this.acceleration = 0
             this.velocity = 0
@@ -70,14 +72,25 @@ class Player extends Phaser.Physics.Arcade.Sprite
 
         switch (this.lives)
         {
+            case 3:
+                this.scene.life1.visible = true
+                this.scene.life2.visible = true
+                this.scene.life3.visible = true
+                break
             case 2:
-                this.scene.life1.destroy()
+                this.scene.life1.visible = false
+                this.scene.life2.visible = true
+                this.scene.life3.visible = true
                 break
             case 1:
-                this.scene.life2.destroy()
+                this.scene.life1.visible = false
+                this.scene.life2.visible = false
+                this.scene.life3.visible = true
                 break
             case 0:
-                this.scene.life3.destroy()
+                this.scene.life1.visible = false
+                this.scene.life2.visible = false
+                this.scene.life3.visible = false
                 break
         }
     }

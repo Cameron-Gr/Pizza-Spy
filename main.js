@@ -293,17 +293,29 @@ class Gameplay extends Phaser.Scene
 
     preload()
     {
+        // Background
         this.load.image("road", "Assets/Sprites/Gameplay/Road.png")
 
+
+        // Objects
         this.load.spritesheet("playerVan", "Assets/Sprites/Gameplay/PlayerVan.png", {frameWidth: 60, frameHeight: 100})
         this.load.image("projectile", "Assets/Sprites/Gameplay/PlayerProjectile.png")
 
         this.load.spritesheet("enemyVan", "Assets/Sprites/Gameplay/EnemyVan.png", {frameWidth: 60, frameHeight: 100})
         this.load.image("obstacle", "Assets/Sprites/Gameplay/EnemyObstacle.png")
 
+        this.load.spritesheet("car", "Assets/Sprites/Gameplay/Car.png", {frameWidth: 45, frameHeight: 90})
+        this.load.spritesheet("bike", "Assets/Sprites/Gameplay/Bike.png", {frameWidth: 35, frameHeight: 90})
+
+        this.load.spritesheet("explosion", "Assets/Sprites/Gameplay/Explosion.png", {frameWidth: 80, frameHeight: 80})
+
+
+        // UI
         this.load.image("life", "Assets/Sprites/Gameplay/Life.png")
         this.load.image("lifeContainer", "Assets/Sprites/Gameplay/LifeContainer.png")
 
+
+        // Sounds
         this.load.audio("pizzaFling", "Assets/Audio/pizzaFling.wav")
         this.load.audio("boneDrop", "Assets/Audio/boneDrop.wav")
         this.load.audio("vehicleHit", "Assets/Audio/vehicleHit.wav")
@@ -316,6 +328,7 @@ class Gameplay extends Phaser.Scene
         // Resets score
         score = 0
 
+        // Animation set-up
         this.setUpAnimations()
 
         // Sets up keyboard
@@ -330,6 +343,15 @@ class Gameplay extends Phaser.Scene
 
         // Scrolling road background
         this.road = new Road(this, gameConfig.width / 2, 0, "road")
+
+        // Road boundaries
+        this.roadEdges = this.physics.add.staticGroup()
+
+        let leftEdge = this.add.rectangle(60, gameConfig.height / 2, 5, gameConfig.height)
+        this.roadEdges.add(leftEdge)
+
+        let rightEdge = this.add.rectangle(gameConfig.width - 60, gameConfig.height / 2, 5, gameConfig.height)
+        this.roadEdges.add(rightEdge)
 
 
         // Player ------------------------------------------------------------------------------
@@ -351,6 +373,8 @@ class Gameplay extends Phaser.Scene
 
 
         // Enemy ------------------------------------------------------------------------------
+        this.enemySpawnTimer = 5
+
         // Enemy group
         this.enemies = this.physics.add.group(
             {
@@ -368,14 +392,65 @@ class Gameplay extends Phaser.Scene
         )
 
 
+        // Passive Vehicles ------------------------------------------------------------------------------
+        this.passiveVehicleSpawnTimer = 2
+        // Car group
+        this.cars = this.physics.add.group(
+            {
+                classType: Car,
+                runChildUpdate: true
+            }
+        )
+
+        this.bikes = this.physics.add.group(
+            {
+                classType: Bike,
+                runChildUpdate: true
+            }
+        )
+
+
         // Colliders ------------------------------------------------------------------------------
+        // Player / Road Edges
+        this.physics.add.collider(this.player, this.roadEdges, (player, edge) => 
+        {
+            this.vehicleHit.play()
+
+            // Ensures that this code is only called once
+            edge.destroy()
+
+            player.lives = 0
+
+            player.visible = false
+
+            // Explosion at player location
+            let explosion = this.add.sprite(player.x, player.y, "explosion")
+            explosion.play("explosionAnim")
+            // Then destroy explosion
+            explosion.on("animationcomplete", () => {explosion.destroy(), this.scene.start("gameOver")})
+        })
+
+        // Player / Obstacles
         this.physics.add.collider(this.player, this.obstacles, (player, obstacles) =>
         {
             this.vehicleHit.play()
             player.lives -= 1
             obstacles.destroy()
+
+            // Player death
+            if (player.lives <= 0)
+            {
+                player.visible = false
+
+                // Explosion at player location
+                let explosion = this.add.sprite(player.x, player.y, "explosion")
+                explosion.play("explosionAnim")
+                // Then destroy explosion
+                explosion.on("animationcomplete", () => {explosion.destroy(), this.scene.start("gameOver")})
+            }
         })
 
+        // Projectiles / Enemies
         this.physics.add.collider(this.projectiles, this.enemies, (projectile, enemy) =>
         {
             score += 100
@@ -384,6 +459,100 @@ class Gameplay extends Phaser.Scene
             this.vehicleExplode.play()
             projectile.destroy()
             enemy.destroy()
+
+            // Explosion at enemy location
+            let explosion = this.add.sprite(enemy.x, enemy.y, "explosion")
+            explosion.play("explosionAnim")
+            // Then destroy explosion
+            explosion.on("animationcomplete", () => {explosion.destroy()})
+        })
+
+        // Player / Cars
+        this.physics.add.collider(this.player, this.cars, (player, car) =>
+        {
+            this.vehicleHit.play()
+            player.lives -= 1
+            car.destroy()
+
+            // Explosion at car location
+            let explosion = this.add.sprite(car.x, car.y, "explosion")
+            explosion.play("explosionAnim")
+            // Then destroy explosion
+            explosion.on("animationcomplete", () => {explosion.destroy()})
+
+            // Player death
+            if (player.lives <= 0)
+            {
+                player.visible = false
+
+                // Explosion at player location
+                let explosion = this.add.sprite(player.x, player.y, "explosion")
+                explosion.play("explosionAnim")
+                // Then destroy explosion
+                explosion.on("animationcomplete", () => {explosion.destroy(), this.scene.start("gameOver")})
+            }
+        })
+
+        // Player / Bikes
+        this.physics.add.collider(this.player, this.bikes, (player, bike) =>
+        {
+            // Score cannot be less than 0
+            if (score > 0)
+            {
+                score -= 100
+                this.scoreText.setText(score)
+            }
+
+            this.vehicleHit.play()
+            bike.destroy()
+
+            // Explosion at bike location
+            let explosion = this.add.sprite(bike.x, bike.y, "explosion")
+            explosion.play("explosionAnim")
+            // Then destroy explosion
+            explosion.on("animationcomplete", () => {explosion.destroy()})
+        })
+
+        // Projectiles / Cars
+        this.physics.add.collider(this.projectiles, this.cars, (projectile, car) =>
+        {
+            // Score cannot be less than 0
+            if (score > 0)
+            {
+                score -= 100
+                this.scoreText.setText(score)
+            }
+
+            this.vehicleHit.play()
+            projectile.destroy()
+            car.destroy()
+
+            // Explosion at car location
+            let explosion = this.add.sprite(car.x, car.y, "explosion")
+            explosion.play("explosionAnim")
+            // Then destroy explosion
+            explosion.on("animationcomplete", () => {explosion.destroy()})
+        })
+
+        // Projectiles / Bikes
+        this.physics.add.collider(this.projectiles, this.bikes, (projectile, bike) =>
+        {
+            // Score cannot be less than 0
+            if (score > 0)
+            {
+                score -= 100
+                this.scoreText.setText(score)
+            }
+
+            this.vehicleHit.play()
+            projectile.destroy()
+            bike.destroy()
+
+            // Explosion at bike location
+            let explosion = this.add.sprite(bike.x, bike.y, "explosion")
+            explosion.play("explosionAnim")
+            // Then destroy explosion
+            explosion.on("animationcomplete", () => {explosion.destroy()})
         })
 
 
@@ -415,18 +584,29 @@ class Gameplay extends Phaser.Scene
 
         // Update player
         this.player.update(this.cursors)
+        
 
-        // Ends the game if the player runs out of lives or leaves road boundaries
-        if (this.player.lives <= 0 || (this.player.x < 80 || this.player.x > gameConfig.width - 80))
-        {
-            this.scene.start("gameOver")
-        }
-
-
-        // Adds new enemies when none exist
-        if (this.enemies.getLength() <= 0)
+        // Adds new enemies when timer reaches 0
+        if (this.enemySpawnTimer <= 0)
         {
             this.spawnEnemyFormation()
+            this.enemySpawnTimer = Phaser.Math.Between(50, 80) / 10
+        }
+        // Spawn timer only counts down if no enemies exist
+        else if (this.enemies.getLength() <= 0)
+        {
+            this.enemySpawnTimer -= 0.01
+
+            // Spawns a passive vehicle periodically if there are no enemies
+            if (this.passiveVehicleSpawnTimer <= 0 && this.enemySpawnTimer > 1)
+            {
+                this.spawnPassiveVehicle()
+                this.passiveVehicleSpawnTimer = Phaser.Math.Between(10, 20) / 10
+            }
+            else
+            {
+                this.passiveVehicleSpawnTimer -= 0.01
+            }
         }
     }
 
@@ -437,26 +617,68 @@ class Gameplay extends Phaser.Scene
         let enemy1 = this.enemies.get(0, 0, "enemyVan")
         let enemy2 = this.enemies.get(0, 0, "enemyVan")
 
-        let spawnFormation = Phaser.Math.Between(1, 4)
+        let spawnFormation = Phaser.Math.Between(1, 10)
 
         switch(spawnFormation)
         {
             case 1:
-                enemy1.body.reset(Phaser.Math.Between(150, 330), -43)
-                enemy2.destroy()
-                break
-            case 2:
                 enemy1.body.reset(150, -43)
                 enemy2.body.reset(240, -43)
                 break
-            case 3:
+            case 2:
                 enemy1.body.reset(240, -43)
                 enemy2.body.reset(330, -43)
                 break
-            case 4:
+            case 3:
                 enemy1.body.reset(150, -43)
                 enemy2.body.reset(330, -43)
                 break
+            default:
+                enemy1.body.reset(Phaser.Math.Between(150, 330), -43)
+                enemy2.destroy()
+                break
+        }
+    }
+
+    spawnPassiveVehicle()
+    {
+        let randVehicle = Phaser.Math.Between(1, 3)
+
+        // Spawns a bike
+        if (randVehicle === 1)
+        {
+            let bike = this.bikes.get(0, 0, "bike")
+            let randLane = Phaser.Math.Between(1, 3)
+            switch (randLane)
+            {
+                case 1:
+                    bike.body.reset(Phaser.Math.Between(140, 160), -40)
+                    break
+                case 2:
+                    bike.body.reset(Phaser.Math.Between(230, 250), -40)
+                    break
+                case 3:
+                    bike.body.reset(Phaser.Math.Between(320, 340), -40)
+                    break
+            }
+            
+            bike.body.allowGravity = false
+        }
+        // Spawns a car
+        else
+        {
+            let car = this.cars.get(0, 0, "car")
+            let randLane = Phaser.Math.Between(1, 2)
+            if (randLane === 1)
+            {
+                car.body.reset(Phaser.Math.Between(140, 160), -40)
+            }
+            else
+            {
+                car.body.reset(Phaser.Math.Between(320, 340), -40)
+            }
+
+            car.body.allowGravity = false
         }
     }
 
@@ -513,6 +735,34 @@ class Gameplay extends Phaser.Scene
             frames: this.anims.generateFrameNumbers("enemyVan", {start: 0, end: 1}),
             frameRate: 4,
             repeat: -1
+        })
+
+        // Car anim
+        this.anims.create(
+        {
+            key: "carAnim",
+            frames: this.anims.generateFrameNumbers("car", {start: 0, end: 1}),
+            frameRate: 4,
+            repeat: -1
+        })
+
+        // Bike anim
+        this.anims.create(
+        {
+            key: "bikeAnim",
+            frames: this.anims.generateFrameNumbers("bike", {start: 0, end: 1}),
+            frameRate: 8,
+            repeat: -1
+        })
+
+
+        // Explosion anim
+        this.anims.create(
+        {
+            key: "explosionAnim",
+            frames: this.anims.generateFrameNumbers("explosion", {start: 0, end: 3}),
+            frameRate: 12,
+            repeat: 0
         })
     }
 }

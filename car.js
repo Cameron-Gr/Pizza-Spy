@@ -1,4 +1,4 @@
-class Obstacle extends Phaser.Physics.Arcade.Image
+class Car extends Phaser.Physics.Arcade.Sprite
 {
     constructor(scene, x, y, texture)
     {
@@ -9,16 +9,21 @@ class Obstacle extends Phaser.Physics.Arcade.Image
         scene.physics.add.existing(this)
         this.body.allowGravity = false
 
+        this.setCollideWorldBounds(false)
+
         this.body.setSize(35, 80)
         this.setOffset(5, 0)
+
+        this.speed = Phaser.Math.Between(1, 1.5)
     }
 
     update()
-    {
-        // sets the obstacle speed to match the road speed
-        this.y += this.scene.road.speed
+    {   
+        this.y += this.scene.road.speed + this.speed
 
-        if(this.y > 580)
+        this.play("carAnim", true)
+
+        if (this.y > 580)
         {
             this.destroy()
         }
