@@ -394,6 +394,7 @@ class Gameplay extends Phaser.Scene
 
         // Passive Vehicles ------------------------------------------------------------------------------
         this.passiveVehicleSpawnTimer = 2
+
         // Car group
         this.cars = this.physics.add.group(
             {
@@ -402,6 +403,7 @@ class Gameplay extends Phaser.Scene
             }
         )
 
+        // Bike group
         this.bikes = this.physics.add.group(
             {
                 classType: Bike,
@@ -470,6 +472,14 @@ class Gameplay extends Phaser.Scene
         // Player / Cars
         this.physics.add.collider(this.player, this.cars, (player, car) =>
         {
+            score -= 100
+            // Score cannot go below 0
+            if (score < 0)
+            {
+                score = 0
+            }
+            this.scoreText.setText(score)
+            
             this.vehicleHit.play()
             player.lives -= 1
             car.destroy()
@@ -496,12 +506,13 @@ class Gameplay extends Phaser.Scene
         // Player / Bikes
         this.physics.add.collider(this.player, this.bikes, (player, bike) =>
         {
-            // Score cannot be less than 0
-            if (score > 0)
+            score -= 200
+            // Score cannot go below 0
+            if (score < 0)
             {
-                score -= 100
-                this.scoreText.setText(score)
+                score = 0
             }
+            this.scoreText.setText(score)
 
             this.vehicleHit.play()
             bike.destroy()
@@ -516,12 +527,13 @@ class Gameplay extends Phaser.Scene
         // Projectiles / Cars
         this.physics.add.collider(this.projectiles, this.cars, (projectile, car) =>
         {
-            // Score cannot be less than 0
-            if (score > 0)
+            score -= 100
+            // Score cannot go below 0
+            if (score < 0)
             {
-                score -= 100
-                this.scoreText.setText(score)
+                score = 0
             }
+            this.scoreText.setText(score)
 
             this.vehicleHit.play()
             projectile.destroy()
@@ -537,12 +549,13 @@ class Gameplay extends Phaser.Scene
         // Projectiles / Bikes
         this.physics.add.collider(this.projectiles, this.bikes, (projectile, bike) =>
         {
-            // Score cannot be less than 0
-            if (score > 0)
+            score -= 100
+            // Score cannot go below 0
+            if (score < 0)
             {
-                score -= 100
-                this.scoreText.setText(score)
+                score = 0
             }
+            this.scoreText.setText(score)
 
             this.vehicleHit.play()
             projectile.destroy()
@@ -560,7 +573,7 @@ class Gameplay extends Phaser.Scene
         // Life container
         this.lifeContainer = this.add.image(40, 390, "lifeContainer")
 
-        // Lives are destroyed one-by-one in the player class
+        // Lives are made invisible one-by-one in the player class
         this.life1 = this.add.image(40, 345, "life")
         this.life2 = this.add.image(40, 390, "life")
         this.life3 = this.add.image(40, 435, "life")
@@ -925,7 +938,7 @@ window.onload = function ()
             arcade:
             {
                 gravity: { y: 200 },
-                debug: false
+                debug: true
             }
         },
         scene: [Main, HowToPlay, Gameplay, GameOver]
