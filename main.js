@@ -938,7 +938,7 @@ window.onload = function ()
             arcade:
             {
                 gravity: { y: 200 },
-                debug: true
+                debug: false
             }
         },
         scene: [Main, HowToPlay, Gameplay, GameOver]
