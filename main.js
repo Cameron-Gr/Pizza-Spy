@@ -472,7 +472,7 @@ class Gameplay extends Phaser.Scene
         // Player / Cars
         this.physics.add.collider(this.player, this.cars, (player, car) =>
         {
-            score -= 100
+            score -= 50
             // Score cannot go below 0
             if (score < 0)
             {
@@ -506,7 +506,7 @@ class Gameplay extends Phaser.Scene
         // Player / Bikes
         this.physics.add.collider(this.player, this.bikes, (player, bike) =>
         {
-            score -= 200
+            score -= 100
             // Score cannot go below 0
             if (score < 0)
             {
@@ -527,7 +527,7 @@ class Gameplay extends Phaser.Scene
         // Projectiles / Cars
         this.physics.add.collider(this.projectiles, this.cars, (projectile, car) =>
         {
-            score -= 100
+            score -= 50
             // Score cannot go below 0
             if (score < 0)
             {
@@ -549,7 +549,7 @@ class Gameplay extends Phaser.Scene
         // Projectiles / Bikes
         this.physics.add.collider(this.projectiles, this.bikes, (projectile, bike) =>
         {
-            score -= 100
+            score -= 50
             // Score cannot go below 0
             if (score < 0)
             {
