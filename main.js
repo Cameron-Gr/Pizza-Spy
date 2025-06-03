@@ -549,7 +549,7 @@ class Gameplay extends Phaser.Scene
         // Projectiles / Bikes
         this.physics.add.collider(this.projectiles, this.bikes, (projectile, bike) =>
         {
-            score -= 50
+            score -= 100
             // Score cannot go below 0
             if (score < 0)
             {
