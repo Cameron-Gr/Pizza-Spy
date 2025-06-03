@@ -6,7 +6,7 @@ class Road extends Phaser.GameObjects.Image
 
         scene.add.existing(this)
 
-        this.speed = 1
+        this.speed = 2.75
     }
 
     update(isGameplay)
@@ -18,10 +18,12 @@ class Road extends Phaser.GameObjects.Image
             this.y = 0
         }
 
-        if (isGameplay && this.speed < 3)
+        if (isGameplay && this.speed < 8)
         {
-            this.speed *= 1.00005
+            this.speed *= 1.0001
         }
+
+        console.log(this.speed)
     }
 }
 

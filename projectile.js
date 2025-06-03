@@ -21,7 +21,7 @@ class Projectile extends Phaser.Physics.Arcade.Image
             this.destroy()
         }
 
-        this.rotation += Math.PI / 50
+        this.rotation += Math.PI / 20
 
         if (this.rotation >= (Math.PI * 2))
         {

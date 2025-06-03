@@ -14,7 +14,7 @@ class Bike extends Phaser.Physics.Arcade.Sprite
         this.body.setSize(15, 60)
         this.setOffset(10, 10)
 
-        this.speed = Phaser.Math.Between(2, 2.5)
+        this.speed = Phaser.Math.Between(3.5, 4)
     }
 
     update()

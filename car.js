@@ -14,7 +14,7 @@ class Car extends Phaser.Physics.Arcade.Sprite
         this.body.setSize(35, 80)
         this.setOffset(5, 0)
 
-        this.speed = Phaser.Math.Between(1, 1.5)
+        this.speed = Phaser.Math.Between(2, 2.5)
     }
 
     update()

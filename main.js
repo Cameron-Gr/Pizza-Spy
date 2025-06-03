@@ -608,7 +608,7 @@ class Gameplay extends Phaser.Scene
         // Spawn timer only counts down if no enemies exist
         else if (this.enemies.getLength() <= 0)
         {
-            this.enemySpawnTimer -= 0.01
+            this.enemySpawnTimer -= 0.0275
 
             // Spawns a passive vehicle periodically if there are no enemies
             if (this.passiveVehicleSpawnTimer <= 0 && this.enemySpawnTimer > 1)
@@ -618,7 +618,7 @@ class Gameplay extends Phaser.Scene
             }
             else
             {
-                this.passiveVehicleSpawnTimer -= 0.01
+                this.passiveVehicleSpawnTimer -= 0.0275
             }
         }
     }

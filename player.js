@@ -54,14 +54,14 @@ class Player extends Phaser.Physics.Arcade.Sprite
         // Left movement (acceleration and deceleration)
         if(cursorKeys.left.isDown || (cursorKeys.right.isUp && this.velocity > 0))
         {
-            this.acceleration = -1
+            this.acceleration = -2.75
 
             this.rotation = -0.1
         }
         // Right movement (acceleration and deceleration)
         if(cursorKeys.right.isDown || (cursorKeys.left.isUp && this.velocity < 0))
         {
-            this.acceleration = 1
+            this.acceleration = 2.75
 
             this.rotation = 0.1
         }
